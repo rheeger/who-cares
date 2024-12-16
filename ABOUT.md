@@ -43,7 +43,7 @@ Who Cares is a 2-minute weekly mental health check-in game that helps users refl
 
 ### Social Features (MVP)
 - Shareable score cards for X, Facebook, Instagram, and Warpcast
-- Score card includes: username, weekly score, bonus points, and WCC earned
+- Score card includes: username, weekly score, bonus points, and $WHOCARES earned
 - Basic leaderboard functionality
 
 ### Analytics & Tracking
@@ -55,15 +55,15 @@ Who Cares is a 2-minute weekly mental health check-in game that helps users refl
   - Social sharing analytics
   - User retention metrics
 
-### Token Economics ($WCC)
+### Token Economics ($WHOCARES)
 Phase 2 Features (Post-MVP):
 - Fair launch token with no pre-mine
 - ZK-SNARK implementation for private health data verification
 - Token distribution:
-  - 10k $WCC for HealthKit connection
-  - 10k $WCC for first game
-  - +1000 $WCC weekly consistency bonus
-  - +2000 $WCC weekly improvement bonus
+  - 10k $WHOCARES for HealthKit connection
+  - 10k $WHOCARES for first game
+  - +1000 $WHOCARES weekly consistency bonus
+  - +2000 $WHOCARES weekly improvement bonus
 - Token burning mechanism for missed weeks
 - Withdrawal functionality to external wallets
 
@@ -71,7 +71,7 @@ Phase 2 Features (Post-MVP):
 - Team-based weekly competitions
 - Invite system via shareable links
 - Independent submissions within Sunday window
-- Team scoring and bonus WCC distribution
+- Team scoring and bonus $WHOCARES distribution
 
 ## Technical Stack
 
@@ -92,7 +92,7 @@ Phase 2 Features (Post-MVP):
 
 ### Blockchain (Phase 2)
 - Base network integration
-- ERC20 token contract ($WCC)
+- ERC20 token contract ($WHOCARES)
 - ZK-SNARK contracts for health data privacy
 - Account Abstraction via Privy.io
 
