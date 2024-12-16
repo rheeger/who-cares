@@ -1,0 +1,29 @@
+{
+  "migIndex": 1,
+  "data": [
+    {
+      "path": "assets/fonts/BasementGrotesque-Black.ttf",
+      "sha1": "78fb38f212fa49029aff24c669a39648d9b4e68b"
+    },
+    {
+      "path": "assets/fonts/DrukWideBold.ttf",
+      "sha1": "32cf5241179426fae2d21bd976e48387e9217c4b"
+    },
+    {
+      "path": "assets/fonts/MonumentExtended-Regular.otf",
+      "sha1": "66a83ce17df23b79302f83dc0aa84d7c3a93d71d"
+    },
+    {
+      "path": "assets/fonts/MonumentExtended-Ultrabold.otf",
+      "sha1": "66a83ce17df23b79302f83dc0aa84d7c3a93d71d"
+    },
+    {
+      "path": "assets/fonts/SpaceGrotesk-Bold.ttf",
+      "sha1": "cfef2f9a4ff411808f7a1f651cc6bef9052b0175"
+    },
+    {
+      "path": "assets/fonts/SpaceGrotesk-Medium.ttf",
+      "sha1": "cce98702067ac7ac9f9f1d749bb15150a7389ad8"
+    }
+  ]
+}
