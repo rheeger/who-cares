@@ -2,6 +2,7 @@ import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Platform, Animated } from 'react-native';
 import { COLORS, FONTS, SPACING, LAYOUT, SHADOWS } from '../../styles/theme';
 import { CheckInFlow } from '../CheckInFlow/CheckInFlow';
+import { HealthKitButton } from '../HealthKitButton';
 import { isInCheckInWindow, getNextCheckInDay } from '@who-cares/config';
 
 const getCheckInStatus = () => {
@@ -77,16 +78,22 @@ export const Home: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      <Animated.View style={{ transform: [{ scale: buttonScale }] }}>
-        <TouchableOpacity 
-          style={[styles.startButton, { backgroundColor: buttonColor }]}
-          onPress={handleStartCheckIn}
-          disabled={!checkInWindow.isOpen}
-          activeOpacity={0.7}
-        >
-          <Text style={styles.startButtonText}>START CHECK-IN</Text>
-        </TouchableOpacity>
-      </Animated.View>
+      <View style={styles.buttonContainer}>
+        <Animated.View style={{ transform: [{ scale: buttonScale }] }}>
+          <TouchableOpacity 
+            style={[styles.startButton, { backgroundColor: buttonColor }]}
+            onPress={handleStartCheckIn}
+            disabled={!checkInWindow.isOpen}
+            activeOpacity={0.7}
+          >
+            <Text style={styles.startButtonText}>START CHECK-IN</Text>
+          </TouchableOpacity>
+        </Animated.View>
+
+        <View style={styles.healthKitButtonContainer}>
+          <HealthKitButton />
+        </View>
+      </View>
 
       <View style={styles.statusContainer}>
         <View style={[styles.statusDot, { backgroundColor: status.color }]} />
@@ -112,6 +119,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: COLORS.BLACK,
+  },
+  buttonContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  healthKitButtonContainer: {
+    marginTop: SPACING.XL,
   },
   startButton: {
     paddingVertical: SPACING.LG,

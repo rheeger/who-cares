@@ -56,5 +56,9 @@
 		<string>BasementGrotesque-Black.ttf</string>
 		<string>DrukWideBold.ttf</string>
 	</array>
+	<key>NSHealthShareUsageDescription</key>
+	<string>We need access to your health data to calculate bonus points based on your sleep and steps data.</string>
+	<key>NSHealthUpdateUsageDescription</key>
+	<string>We need access to your health data to calculate bonus points based on your sleep and steps data.</string>
 </dict>
 </plist>
