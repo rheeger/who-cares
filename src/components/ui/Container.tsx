@@ -14,6 +14,10 @@ interface ContainerProps extends ViewProps {
   paddingVertical?: SpacingKey | number;
   marginHorizontal?: SpacingKey | number;
   marginVertical?: SpacingKey | number;
+  marginTop?: SpacingKey | number;
+  marginBottom?: SpacingKey | number;
+  marginLeft?: SpacingKey | number;
+  marginRight?: SpacingKey | number;
   children: React.ReactNode;
 }
 
@@ -28,6 +32,10 @@ export const Container: React.FC<ContainerProps> = ({
   paddingVertical,
   marginHorizontal,
   marginVertical,
+  marginTop,
+  marginBottom,
+  marginLeft,
+  marginRight,
   children,
   style,
   ...props
@@ -39,6 +47,10 @@ export const Container: React.FC<ContainerProps> = ({
     paddingVertical && createSpacingStyle('padding', paddingVertical, 'vertical'),
     marginHorizontal && createSpacingStyle('margin', marginHorizontal, 'horizontal'),
     marginVertical && createSpacingStyle('margin', marginVertical, 'vertical'),
+    marginTop && createSpacingStyle('margin', marginTop, 'top'),
+    marginBottom && createSpacingStyle('margin', marginBottom, 'bottom'),
+    marginLeft && createSpacingStyle('margin', marginLeft, 'left'),
+    marginRight && createSpacingStyle('margin', marginRight, 'right'),
   ].filter(Boolean);
 
   const combinedStyle = combineStyles(
