@@ -3,10 +3,10 @@ import { Dimensions } from 'react-native';
 const { width, height } = Dimensions.get('window');
 
 export const COLORS = {
-  PRIMARY: '#4ECDC4',
-  WARNING: '#FFD700',
-  DANGER: '#FF6B6B',
-  SUCCESS: '#4BB543',
+  PRIMARY: '#006AA7',        // Swedish flag blue
+  WARNING: '#FECC00',        // Swedish flag yellow  
+  DANGER: '#0066CC',         // Darker Swedish blue for alerts
+  SUCCESS: '#FECC00',        // Swedish flag yellow for success
   WHITE: '#FFFFFF',
   BLACK: '#1A1A1A',
   GRAY: '#666666',
