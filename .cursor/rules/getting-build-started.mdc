@@ -1,0 +1,168 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Getting the Build Started - WhoCares Project
+
+This guide helps you set up and run the WhoCares mental health check-in app on your local machine.
+
+## Prerequisites
+
+- **Node.js**: v20+ (check with `node --version`)
+- **Yarn**: v1.22+ (check with `yarn --version`)
+- **Docker**: For running PostgreSQL database
+- **Xcode**: Latest version with iOS simulators installed
+- **CocoaPods**: For iOS dependencies (`which pod`)
+
+## Initial Setup
+
+### 1. Install Dependencies
+
+```bash
+yarn install
+```
+
+### 2. Start PostgreSQL Database
+The project includes a Docker Compose configuration for PostgreSQL:
+```bash
+docker compose up -d
+```
+
+This starts PostgreSQL on port 6432 with:
+- Database: `who_cares_dev`
+- Username: `postgres`
+- Password: `postgres`
+
+### 3. iOS Setup
+```bash
+cd apps/mobile/ios
+pod install
+cd ../../..
+```
+
+## Running the Applications
+
+### Start the API Server
+```bash
+npx nx serve api
+```
+The API runs on http://localhost:3000/api
+
+**Note**: If port 3000 is already in use, run on a different port:
+```bash
+PORT=3001 npx nx serve api
+```
+
+### Start Metro Bundler
+```bash
+npx nx start mobile
+```
+This starts the React Native Metro bundler on port 8081.
+
+### Run iOS App
+
+#### Basic command:
+```bash
+npx nx run-ios mobile
+```
+
+#### If you encounter build errors:
+```bash
+# Use the correct scheme name (capital M)
+npx nx run-ios mobile -- --scheme="Mobile"
+
+# Target a specific simulator
+npx nx run-ios mobile -- --scheme="Mobile" --simulator="iPhone 16 Pro"
+```
+
+## Common Issues and Solutions
+
+### 1. Node Version Mismatch
+**Error**: Xcode build fails due to Node version mismatch
+
+**Solution**: Update the Node path in [.xcode.env.local](mdc:apps/mobile/ios/.xcode.env.local):
+```bash
+export NODE_BINARY=$(which node)
+```
+
+### 2. iOS SDK Version Issues
+**Error**: "iOS 18.5 is not installed"
+
+**Solution**: 
+- Install the required iOS runtime in Xcode (Settings → Platforms)
+- Or use a simulator with your installed iOS version
+
+### 3. Scheme Name Case Sensitivity
+**Error**: "The workspace named 'mobile' does not contain a scheme named 'mobile'"
+
+**Solution**: Use capital 'M' for the scheme:
+```bash
+npx nx run-ios mobile -- --scheme="Mobile"
+```
+
+### 4. Xcode Plugin Loading Error
+**Error**: "A required plugin failed to load"
+
+**Solution**: Run Xcode first launch:
+```bash
+sudo xcodebuild -runFirstLaunch
+```
+
+### 5. Port Already in Use
+**Error**: "EADDRINUSE: address already in use :::3000"
+
+**Solution**: Find and stop the process or use a different port:
+```bash
+# Check what's using the port
+lsof -i :3000 | grep LISTEN
+
+# Run API on different port
+PORT=3001 npx nx serve api
+```
+
+## Project Structure
+
+- **[apps/api](mdc:apps/api)**: NestJS backend API
+- **[apps/mobile](mdc:apps/mobile)**: React Native mobile app
+- **[libs/config](mdc:libs/config)**: Shared configuration
+- **[docker-compose.yml](mdc:docker-compose.yml)**: Database configuration
+
+## Verifying Setup
+
+1. **Database**: Check Docker container is running:
+   ```bash
+   docker ps
+   ```
+
+2. **API**: Test the API endpoint:
+   ```bash
+   curl http://localhost:3000/api
+   ```
+
+3. **Mobile**: The iOS simulator should launch with the app
+
+## Available Nx Commands
+
+```bash
+# List all projects
+npx nx show projects
+
+# Run tests
+npx nx test mobile
+npx nx test api
+
+# Build projects
+npx nx build api
+npx nx build mobile
+```
+
+## Tips
+
+- Always ensure Metro bundler is running before launching the mobile app
+- If builds fail, try cleaning derived data:
+  ```bash
+  rm -rf ~/Library/Developer/Xcode/DerivedData/*
+  ```
+- Use `npx react-native doctor` to diagnose React Native setup issues
+- The project uses Yarn workspaces, so always use `yarn` instead of `npm`

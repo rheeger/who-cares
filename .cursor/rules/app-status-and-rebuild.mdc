@@ -1,0 +1,232 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# App Status Check and Rebuild Guide
+
+This guide helps you check what parts of the WhoCares app are running and how to properly rebuild after code changes.
+
+## Quick Status Checks
+
+### Check All Running Services
+```bash
+# Check if API is running (port 3000)
+lsof -i :3000 | grep LISTEN
+
+# Check if Metro bundler is running (port 8081)
+lsof -i :8081 | grep LISTEN
+
+# Check if PostgreSQL is running
+docker ps | grep postgres
+
+# Check running simulators
+xcrun simctl list devices | grep "Booted"
+```
+
+### Check Individual Services
+
+#### API Server Status
+```bash
+# Test if API is responding
+curl http://localhost:3000/api
+
+# Find what's using port 3000
+lsof -i :3000
+```
+
+#### Metro Bundler Status
+```bash
+# Check Metro process
+ps aux | grep "react-native start" | grep -v grep
+
+# Check if Metro is responding
+curl http://localhost:8081/status
+```
+
+## Rebuilding After Code Changes
+
+### Quick Rebuild (Most Cases)
+For most code changes, just reload the app:
+1. Press `r` in the Metro terminal
+2. Or shake device/press Cmd+R in simulator
+
+### Medium Rebuild (When Quick Doesn't Work)
+```bash
+# From project root
+cd apps/mobile && npx react-native clean
+cd ../.. && npx nx run-ios mobile -- --scheme="Mobile"
+```
+
+### Full Clean Rebuild (After Pulling New Code)
+When you pull fresh commits or the app shows old cached builds:
+
+```bash
+# 1. Stop all services
+pkill -f "react-native start" || echo "Metro not running"
+pkill -f "nx serve api" || echo "API not running"
+
+# 2. Clean everything
+cd apps/mobile && npx react-native clean
+rm -rf ~/Library/Developer/Xcode/DerivedData/*
+cd ios && rm -rf build
+watchman watch-del-all && watchman shutdown-server
+
+# 3. Reinstall iOS dependencies
+pod deintegrate && pod install
+
+# 4. Return to project root
+cd ../../..
+
+# 5. Start services fresh
+npx nx start mobile --reset-cache  # In one terminal
+npx nx serve api                    # In another terminal (or use PORT=3001 if 3000 is taken)
+
+# 6. Build and run
+npx nx run-ios mobile -- --scheme="Mobile" --simulator="iPhone 16 Pro"
+```
+
+## Service Management
+
+### Starting Services
+
+#### Database
+```bash
+docker compose up -d
+```
+
+#### API Server
+```bash
+npx nx serve api
+
+# If port 3000 is in use:
+PORT=3001 npx nx serve api
+```
+
+#### Metro Bundler
+```bash
+npx nx start mobile
+
+# With cache reset:
+npx nx start mobile --reset-cache
+```
+
+#### iOS App
+```bash
+# Basic
+npx nx run-ios mobile
+
+# With correct scheme (often needed)
+npx nx run-ios mobile -- --scheme="Mobile"
+
+# Target specific simulator
+npx nx run-ios mobile -- --scheme="Mobile" --simulator="iPhone 16 Pro"
+```
+
+### Stopping Services
+
+```bash
+# Stop Metro bundler
+pkill -f "react-native start"
+
+# Stop API server
+pkill -f "nx serve api"
+
+# Stop database
+docker compose down
+
+# Kill process on specific port
+kill -9 $(lsof -ti:3000)  # Kill whatever is on port 3000
+kill -9 $(lsof -ti:8081)  # Kill whatever is on port 8081
+```
+
+## Common Issues and Quick Fixes
+
+### "Old build showing in simulator"
+```bash
+# Clean and rebuild
+cd apps/mobile && npx react-native clean
+rm -rf ~/Library/Developer/Xcode/DerivedData/*
+cd ../.. && npx nx run-ios mobile -- --scheme="Mobile"
+```
+
+### "Port already in use"
+```bash
+# Find what's using the port
+lsof -i :3000
+
+# Kill it
+kill -9 $(lsof -ti:3000)
+
+# Or run on different port
+PORT=3001 npx nx serve api
+```
+
+### "Watchman crawl warnings"
+```bash
+watchman watch-del '/Users/rheeger/Code/rheeger/who-cares'
+watchman watch-project '/Users/rheeger/Code/rheeger/who-cares'
+```
+
+### "Scheme 'mobile' not found"
+Always use capital M:
+```bash
+npx nx run-ios mobile -- --scheme="Mobile"
+```
+
+### "Node version mismatch in Xcode"
+Update [.xcode.env.local](mdc:apps/mobile/ios/.xcode.env.local):
+```bash
+export NODE_BINARY=$(which node)
+```
+
+## Quick Reference Commands
+
+### Check Everything
+```bash
+# One command to check all services
+echo "=== API (3000) ===" && lsof -i :3000 | grep LISTEN && \
+echo "=== Metro (8081) ===" && lsof -i :8081 | grep LISTEN && \
+echo "=== Database ===" && docker ps | grep postgres && \
+echo "=== Simulators ===" && xcrun simctl list devices | grep "Booted"
+```
+
+### Nuclear Clean (Reset Everything)
+```bash
+# Run from project root
+cd apps/mobile && npx react-native clean && \
+rm -rf ~/Library/Developer/Xcode/DerivedData/* && \
+cd ios && rm -rf build && pod deintegrate && pod install && \
+cd ../../.. && \
+watchman watch-del-all && watchman shutdown-server
+```
+
+### Standard Development Startup
+```bash
+# Terminal 1: Database
+docker compose up -d
+
+# Terminal 2: API
+npx nx serve api
+
+# Terminal 3: Metro
+npx nx start mobile
+
+# Terminal 4: Build and run
+npx nx run-ios mobile -- --scheme="Mobile"
+```
+
+## Pro Tips
+
+1. **After pulling new code**: Always do at least a Medium Rebuild
+2. **Metro not updating**: Kill it and restart with `--reset-cache`
+3. **Multiple simulators**: Close extras in Simulator app to avoid confusion
+4. **API changes**: The API hot-reloads, but you may need to restart if adding new dependencies
+5. **Use the Metro menu**: Press `i` in Metro terminal instead of running build commands
+
+## File Locations
+
+- **API code**: [apps/api](mdc:apps/api)
+- **Mobile app code**: [apps/mobile](mdc:apps/mobile)
+- **iOS project**: [apps/mobile/ios](mdc:apps/mobile/ios)
+- **Docker config**: [docker-compose.yml](mdc:docker-compose.yml)
