@@ -1,6 +1,7 @@
 import React from 'react';
 import { TouchableOpacity, Text, ActivityIndicator, TouchableOpacityProps, View } from 'react-native';
 import { createButtonStyles, combineStyles, ColorVariant, SizeVariant, createSpacingStyle, SpacingKey } from '../../styles/utils';
+import { useTheme } from '../ThemeContext';
 
 interface ButtonProps extends TouchableOpacityProps {
   variant?: ColorVariant | 'ghost';
@@ -27,8 +28,6 @@ interface ButtonProps extends TouchableOpacityProps {
   marginVertical?: SpacingKey;
 }
 
-const buttonStyles = createButtonStyles();
-
 export const Button: React.FC<ButtonProps> = ({
   variant = 'primary',
   size = 'md',
@@ -50,14 +49,17 @@ export const Button: React.FC<ButtonProps> = ({
   style,
   ...props
 }) => {
+  const { currentTheme } = useTheme();
+  const buttonStyles = createButtonStyles(currentTheme);
+
   const spacingStyles = [
-    margin && createSpacingStyle('margin', margin),
-    marginTop && createSpacingStyle('margin', marginTop, 'top'),
-    marginBottom && createSpacingStyle('margin', marginBottom, 'bottom'),
-    marginLeft && createSpacingStyle('margin', marginLeft, 'left'),
-    marginRight && createSpacingStyle('margin', marginRight, 'right'),
-    marginHorizontal && createSpacingStyle('margin', marginHorizontal, 'horizontal'),
-    marginVertical && createSpacingStyle('margin', marginVertical, 'vertical'),
+    margin && createSpacingStyle('margin', margin, undefined, currentTheme),
+    marginTop && createSpacingStyle('margin', marginTop, 'top', currentTheme),
+    marginBottom && createSpacingStyle('margin', marginBottom, 'bottom', currentTheme),
+    marginLeft && createSpacingStyle('margin', marginLeft, 'left', currentTheme),
+    marginRight && createSpacingStyle('margin', marginRight, 'right', currentTheme),
+    marginHorizontal && createSpacingStyle('margin', marginHorizontal, 'horizontal', currentTheme),
+    marginVertical && createSpacingStyle('margin', marginVertical, 'vertical', currentTheme),
   ].filter(Boolean);
 
   const containerStyle = combineStyles(
@@ -80,7 +82,7 @@ export const Button: React.FC<ButtonProps> = ({
     if (loading) {
       return (
         <ActivityIndicator 
-          color={variant === 'primary' || variant === 'success' ? '#FFFFFF' : '#006AA7'} 
+          color={variant === 'primary' || variant === 'success' ? currentTheme.colors.text.inverse : currentTheme.colors.interactive.primary} 
           size="small" 
         />
       );
@@ -88,7 +90,7 @@ export const Button: React.FC<ButtonProps> = ({
 
     if (icon) {
       return (
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: currentTheme.spacing.sm }}>
           {iconPosition === 'left' && icon}
           <Text style={textStyle}>{children}</Text>
           {iconPosition === 'right' && icon}

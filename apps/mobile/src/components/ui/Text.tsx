@@ -1,9 +1,9 @@
 import React from 'react';
 import { Text as RNText, TextProps as RNTextProps } from 'react-native';
 import { createTextStyles, combineStyles, createSpacingStyle, SpacingKey } from '../../styles/utils';
-import { theme } from '../../styles/theme';
+import { useTheme } from '../ThemeContext';
 
-type TypographyVariant = keyof typeof theme.typography.styles;
+type TypographyVariant = 'h1' | 'h2' | 'h3' | 'bodyLarge' | 'body' | 'bodySmall' | 'caption' | 'button' | 'buttonLarge';
 type ColorVariant = 'primary' | 'secondary' | 'tertiary' | 'accent' | 'success' | 'warning' | 'danger' | 'inverse';
 type AlignVariant = 'left' | 'center' | 'right';
 type WeightVariant = 'normal' | 'bold';
@@ -28,8 +28,6 @@ interface TextProps extends RNTextProps {
   marginVertical?: SpacingKey;
 }
 
-const textStyles = createTextStyles();
-
 export const Text: React.FC<TextProps> = ({
   variant = 'body',
   color = 'primary',
@@ -49,21 +47,24 @@ export const Text: React.FC<TextProps> = ({
   style,
   ...props
 }) => {
+  const { currentTheme } = useTheme();
+  const textStyles = createTextStyles(currentTheme);
+  
   const spacingStyles = [
-    margin && createSpacingStyle('margin', margin),
-    marginTop && createSpacingStyle('margin', marginTop, 'top'),
-    marginBottom && createSpacingStyle('margin', marginBottom, 'bottom'),
-    marginLeft && createSpacingStyle('margin', marginLeft, 'left'),
-    marginRight && createSpacingStyle('margin', marginRight, 'right'),
-    marginHorizontal && createSpacingStyle('margin', marginHorizontal, 'horizontal'),
-    marginVertical && createSpacingStyle('margin', marginVertical, 'vertical'),
+    margin && createSpacingStyle('margin', margin, undefined, currentTheme),
+    marginTop && createSpacingStyle('margin', marginTop, 'top', currentTheme),
+    marginBottom && createSpacingStyle('margin', marginBottom, 'bottom', currentTheme),
+    marginLeft && createSpacingStyle('margin', marginLeft, 'left', currentTheme),
+    marginRight && createSpacingStyle('margin', marginRight, 'right', currentTheme),
+    marginHorizontal && createSpacingStyle('margin', marginHorizontal, 'horizontal', currentTheme),
+    marginVertical && createSpacingStyle('margin', marginVertical, 'vertical', currentTheme),
   ].filter(Boolean);
 
   const combinedStyle = combineStyles(
-    textStyles[variant],
-    textStyles[color],
-    align && textStyles[align],
-    weight === 'bold' && { fontFamily: theme.typography.fonts.bodyBold },
+    (textStyles as any)[variant],
+    (textStyles as any)[color],
+    align && (textStyles as any)[align],
+    weight === 'bold' && { fontFamily: currentTheme.typography.fonts.bodyBold },
     ...spacingStyles,
     style
   );

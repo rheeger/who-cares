@@ -1,13 +1,13 @@
 import { StyleSheet, TextStyle, ViewStyle } from 'react-native';
-import { theme } from './theme';
+import { ThemePreset } from './themes';
 
 // Type definitions for style variants
 export type ColorVariant = 'primary' | 'secondary' | 'success' | 'warning' | 'danger';
 export type SizeVariant = 'sm' | 'md' | 'lg' | 'xl';
-export type SpacingKey = keyof typeof theme.spacing;
+export type SpacingKey = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl' | 'xxxl';
 
 // Utility to get color from theme
-export const getColor = (path: string): string => {
+export const getColor = (path: string, theme: ThemePreset): string => {
   const keys = path.split('.');
   let result: any = theme.colors;
   
@@ -19,12 +19,12 @@ export const getColor = (path: string): string => {
 };
 
 // Utility to get spacing value
-export const getSpacing = (key: SpacingKey): number => {
+export const getSpacing = (key: SpacingKey, theme: ThemePreset): number => {
   return theme.spacing[key];
 };
 
 // Utility to get typography style
-export const getTypographyStyle = (variant: keyof typeof theme.typography.styles): TextStyle => {
+export const getTypographyStyle = (variant: keyof typeof theme.typography.styles, theme: ThemePreset): TextStyle => {
   return theme.typography.styles[variant];
 };
 
@@ -33,7 +33,7 @@ export const createResponsiveStyle = (styles: {
   small?: ViewStyle | TextStyle;
   medium?: ViewStyle | TextStyle;
   large?: ViewStyle | TextStyle;
-}) => {
+}, theme: ThemePreset) => {
   const { screenWidth } = theme.layout;
   
   if (screenWidth >= theme.layout.breakpoints.large && styles.large) {
@@ -46,7 +46,7 @@ export const createResponsiveStyle = (styles: {
 };
 
 // Button style variants
-export const createButtonStyles = () => StyleSheet.create({
+export const createButtonStyles = (theme: ThemePreset) => StyleSheet.create({
   // Base button styles
   base: {
     alignItems: 'center',
@@ -147,7 +147,7 @@ export const createButtonStyles = () => StyleSheet.create({
 });
 
 // Card style variants
-export const createCardStyles = () => StyleSheet.create({
+export const createCardStyles = (theme: ThemePreset) => StyleSheet.create({
   base: {
     borderRadius: theme.layout.borderRadius.lg,
     padding: theme.spacing.md,
@@ -177,7 +177,7 @@ export const createCardStyles = () => StyleSheet.create({
 });
 
 // Text style variants
-export const createTextStyles = () => StyleSheet.create({
+export const createTextStyles = (theme: ThemePreset) => StyleSheet.create({
   // Heading styles
   h1: {
     ...theme.typography.styles.h1,
@@ -227,7 +227,7 @@ export const createTextStyles = () => StyleSheet.create({
 });
 
 // Container style variants
-export const createContainerStyles = () => StyleSheet.create({
+export const createContainerStyles = (theme: ThemePreset) => StyleSheet.create({
   screen: {
     flex: 1,
     backgroundColor: theme.colors.surface.tertiary,
@@ -275,9 +275,14 @@ export const combineStyles = (...styles: any[]) => {
 export const createSpacingStyle = (
   type: 'margin' | 'padding',
   spacing: SpacingKey | number,
-  direction?: 'top' | 'bottom' | 'left' | 'right' | 'horizontal' | 'vertical'
+  direction?: 'top' | 'bottom' | 'left' | 'right' | 'horizontal' | 'vertical',
+  theme?: ThemePreset
 ) => {
-  const value = typeof spacing === 'number' ? spacing : getSpacing(spacing);
+  const value = typeof spacing === 'number' 
+    ? spacing 
+    : theme 
+      ? getSpacing(spacing, theme) 
+      : 16; // fallback value
   
   if (!direction) {
     return { [type]: value };

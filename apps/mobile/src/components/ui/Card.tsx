@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, ViewProps } from 'react-native';
 import { createCardStyles, combineStyles, createSpacingStyle, SpacingKey } from '../../styles/utils';
+import { useTheme } from '../ThemeContext';
 
 type SurfaceVariant = 'primary' | 'secondary' | 'glass';
 type ShadowVariant = 'flat' | 'elevated' | 'floating';
@@ -19,8 +20,6 @@ interface CardProps extends ViewProps {
   marginVertical?: SpacingKey;
 }
 
-const cardStyles = createCardStyles();
-
 export const Card: React.FC<CardProps> = ({
   variant = 'secondary',
   shadow = 'elevated',
@@ -35,14 +34,17 @@ export const Card: React.FC<CardProps> = ({
   style,
   ...props
 }) => {
+  const { currentTheme } = useTheme();
+  const cardStyles = createCardStyles(currentTheme);
+  
   const spacingStyles = [
-    margin && createSpacingStyle('margin', margin),
-    marginTop && createSpacingStyle('margin', marginTop, 'top'),
-    marginBottom && createSpacingStyle('margin', marginBottom, 'bottom'),
-    marginLeft && createSpacingStyle('margin', marginLeft, 'left'),
-    marginRight && createSpacingStyle('margin', marginRight, 'right'),
-    marginHorizontal && createSpacingStyle('margin', marginHorizontal, 'horizontal'),
-    marginVertical && createSpacingStyle('margin', marginVertical, 'vertical'),
+    margin && createSpacingStyle('margin', margin, undefined, currentTheme),
+    marginTop && createSpacingStyle('margin', marginTop, 'top', currentTheme),
+    marginBottom && createSpacingStyle('margin', marginBottom, 'bottom', currentTheme),
+    marginLeft && createSpacingStyle('margin', marginLeft, 'left', currentTheme),
+    marginRight && createSpacingStyle('margin', marginRight, 'right', currentTheme),
+    marginHorizontal && createSpacingStyle('margin', marginHorizontal, 'horizontal', currentTheme),
+    marginVertical && createSpacingStyle('margin', marginVertical, 'vertical', currentTheme),
   ].filter(Boolean);
 
   const combinedStyle = combineStyles(

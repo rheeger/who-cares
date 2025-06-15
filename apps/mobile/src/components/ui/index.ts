@@ -6,6 +6,7 @@ export { Input } from './Input';
 export { Alert } from './Alert';
 export { Divider } from './Divider';
 export { HomeExample } from './HomeExample';
+export { ThemeSwitcher } from './ThemeSwitcher';
 
 // Re-export useful types and utilities
 export type { ColorVariant, SizeVariant, SpacingKey } from '../../styles/utils';

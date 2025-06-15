@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, ScrollView } from 'react-native';
-import { Button, Text, Card, Container, Input, Alert, Divider } from './ui';
-import { theme } from '../styles/theme';
+import { Button, Text, Card, Container, Input, Alert, Divider, ThemeSwitcher } from './ui';
+import { ThemeProvider, useTheme } from './ThemeContext';
 
 // Demo Icons (you can replace these with actual icon components later)
 const DemoIcons = {
@@ -17,7 +17,9 @@ const DemoIcons = {
   settings: <Text style={{ fontSize: 16 }}>⚙️</Text>,
 };
 
-export const StylingDemo: React.FC = () => {
+const StylingDemoContent: React.FC = () => {
+  const { currentTheme } = useTheme();
+  
   // Demo state for interactive examples
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -66,32 +68,37 @@ export const StylingDemo: React.FC = () => {
   };
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={[styles.container, { backgroundColor: currentTheme.colors.surface.tertiary }]}>
       <Container variant="content" paddingVertical="xl">
+        
+        {/* Dynamic Theme Switcher */}
+        <ThemeSwitcher />
         
         {/* Header */}
         <Text variant="h1" color="primary" align="center" marginBottom="md">
-          🎨 Enhanced Styling System
+          🎨 Dynamic Styling System
         </Text>
         <Text variant="bodySmall" color="secondary" align="center" marginBottom="xl">
-          7 professional components • Semantic tokens • 70% less code
+          7 professional components • 3 complete themes • Infinite possibilities
         </Text>
 
-        {/* System Status Card */}
+        {/* Current Theme Info */}
         <Card variant="glass" shadow="elevated" marginBottom="xl">
+          <Container variant="row" justify="spaceBetween" marginBottom="sm">
+            <Text variant="bodySmall" color="tertiary">Active Theme:</Text>
+            <Text variant="bodySmall" color="accent" weight="bold">
+              {currentTheme.emoji} {currentTheme.name}
+            </Text>
+          </Container>
+          
           <Container variant="row" justify="spaceBetween" marginBottom="sm">
             <Text variant="bodySmall" color="tertiary">Components Built:</Text>
             <Text variant="bodySmall" color="success" weight="bold">7/25 (28%)</Text>
           </Container>
           
-          <Container variant="row" justify="spaceBetween" marginBottom="sm">
-            <Text variant="bodySmall" color="tertiary">Code Reduction:</Text>
-            <Text variant="bodySmall" color="success" weight="bold">70% Less</Text>
-          </Container>
-          
           <Container variant="row" justify="spaceBetween">
-            <Text variant="bodySmall" color="tertiary">Maintainability:</Text>
-            <Text variant="bodySmall" color="success" weight="bold">100% Better</Text>
+            <Text variant="bodySmall" color="tertiary">Design Systems:</Text>
+            <Text variant="bodySmall" color="success" weight="bold">3 Complete</Text>
           </Container>
         </Card>
 
@@ -102,7 +109,7 @@ export const StylingDemo: React.FC = () => {
           <Alert
             variant="success"
             title="Welcome to WhoCares!"
-            message={`Thanks for joining us, ${name}! Your account has been created.`}
+            message={`Thanks for joining us, ${name}! Your account has been created with ${currentTheme.name} theme.`}
             dismissible
             onDismiss={() => setShowSuccessAlert(false)}
             action={{
@@ -180,7 +187,7 @@ export const StylingDemo: React.FC = () => {
               🎉 Account Created Successfully!
             </Text>
             <Text variant="body" color="inverse" align="center" marginBottom="lg">
-              Welcome to the WhoCares community, {name}!
+              Welcome to the WhoCares community, {name}! Enjoying the {currentTheme.name} theme?
             </Text>
             <Button
               variant="secondary"
@@ -205,7 +212,7 @@ export const StylingDemo: React.FC = () => {
             Success State
           </Button>
           
-          <Container variant="row" marginBottom="sm" style={{ gap: theme.spacing.sm }}>
+          <Container variant="row" marginBottom="sm" style={{ gap: currentTheme.spacing.sm }}>
             <Button 
               variant={isLiked ? "warning" : "secondary"} 
               size="md" 
@@ -237,8 +244,8 @@ export const StylingDemo: React.FC = () => {
           {showWelcomeAlert && (
             <Alert
               variant="info"
-              title="Welcome to the Demo!"
-              message="This showcase demonstrates all 7 components in your styling system"
+              title={`Welcome to ${currentTheme.name} Theme!`}
+              message={`${currentTheme.description} - Try switching themes above to see the magic!`}
               dismissible
               onDismiss={() => setShowWelcomeAlert(false)}
               marginBottom="md"
@@ -247,22 +254,22 @@ export const StylingDemo: React.FC = () => {
           
           <Alert
             variant="warning"
-            title="System Maintenance"
-            message="Scheduled maintenance tonight from 2-4 AM EST"
+            title="Theme System Demo"
+            message="Switch between Swedish, Earth, and Dreamy themes to see component transformations"
             icon={DemoIcons.warning}
             action={{
               label: "Learn More",
-              onPress: () => console.log("Show maintenance details")
+              onPress: () => console.log("Show theme details")
             }}
             marginBottom="md"
           />
           
           <Alert
             variant="danger"
-            message="Network connection lost. Check your internet and try again."
+            message="This is how error states look in the current theme - notice the colors adapt!"
             action={{
               label: "Retry",
-              onPress: () => console.log("Retry connection")
+              onPress: () => console.log("Retry action")
             }}
           />
         </Container>
@@ -272,26 +279,26 @@ export const StylingDemo: React.FC = () => {
         
         <Card variant="glass" shadow="elevated" marginBottom="lg">
           <Text variant="h1" color="primary" marginBottom="sm">
-            DrukWide Bold • 32px
+            {currentTheme.typography.fonts.heading} • {currentTheme.typography.styles.h1.fontSize}px
           </Text>
           <Text variant="h2" color="primary" marginBottom="sm">
-            DrukWide Bold • 24px
+            Heading 2 • {currentTheme.typography.styles.h2.fontSize}px
           </Text>
           <Text variant="h3" color="accent" marginBottom="md">
-            Swedish Yellow Accent • 20px
+            Accent Color • {currentTheme.typography.styles.h3.fontSize}px
           </Text>
           
           <Text variant="bodyLarge" color="secondary" marginBottom="xs">
-            Large body text for important content • MonumentExtended • 18px
+            Large body text • {currentTheme.typography.styles.bodyLarge.fontSize}px
           </Text>
           <Text variant="body" color="tertiary" marginBottom="xs">
-            Regular body text for most content • 16px default size
+            Regular body text • {currentTheme.typography.styles.body.fontSize}px
           </Text>
           <Text variant="bodySmall" color="tertiary" marginBottom="xs">
-            Small body text for secondary information • 14px
+            Small body text • {currentTheme.typography.styles.bodySmall.fontSize}px
           </Text>
           <Text variant="caption" color="tertiary">
-            Caption text for metadata and fine print • 12px
+            Caption text • {currentTheme.typography.styles.caption.fontSize}px
           </Text>
         </Card>
 
@@ -300,69 +307,100 @@ export const StylingDemo: React.FC = () => {
         
         <Container variant="column" marginBottom="lg">
           <Card variant="glass" shadow="elevated" marginBottom="md">
-            <Container variant="row" style={{ alignItems: 'center', gap: theme.spacing.md }}>
+            <Container variant="row" style={{ alignItems: 'center', gap: currentTheme.spacing.md }}>
               <Text style={{ fontSize: 32 }}>🌟</Text>
               <View style={{ flex: 1 }}>
                 <Text variant="h3" color="primary" marginBottom="xs">
-                  Glass Card
+                  Glass Surface
                 </Text>
                 <Text variant="bodySmall" color="secondary">
-                  Transparent background with subtle border
+                  Adapts to {currentTheme.name} theme colors
                 </Text>
               </View>
             </Container>
           </Card>
           
           <Card variant="secondary" shadow="floating" marginBottom="md">
-            <Container variant="row" style={{ alignItems: 'center', gap: theme.spacing.md }}>
+            <Container variant="row" style={{ alignItems: 'center', gap: currentTheme.spacing.md }}>
               <Text style={{ fontSize: 32 }}>🎯</Text>
               <View style={{ flex: 1 }}>
                 <Text variant="h3" color="primary" marginBottom="xs">
                   Secondary Surface
                 </Text>
                 <Text variant="bodySmall" color="secondary">
-                  Dark gray with floating shadow
+                  Shadow style: {currentTheme.name === 'earth' ? 'Organic' : currentTheme.name === 'dreamy' ? 'Soft' : 'Clean'}
                 </Text>
               </View>
             </Container>
           </Card>
           
           <Card variant="primary" shadow="elevated">
-            <Container variant="row" style={{ alignItems: 'center', gap: theme.spacing.md }}>
-              <Text style={{ fontSize: 32 }}>🇸🇪</Text>
+            <Container variant="row" style={{ alignItems: 'center', gap: currentTheme.spacing.md }}>
+              <Text style={{ fontSize: 32 }}>{currentTheme.emoji}</Text>
               <View style={{ flex: 1 }}>
                 <Text variant="h3" color="inverse" marginBottom="xs">
                   Primary Surface
                 </Text>
                 <Text variant="bodySmall" color="inverse">
-                  Swedish flag blue background
+                  {currentTheme.description}
                 </Text>
               </View>
             </Container>
           </Card>
         </Container>
 
-        {/* Next Steps */}
-        <Divider label="NEXT PHASE" marginVertical="lg" />
+        {/* Theme Statistics */}
+        <Divider label="THEME STATISTICS" marginVertical="lg" />
         
         <Card variant="glass" shadow="elevated" marginBottom="lg">
           <Text variant="h3" color="accent" align="center" marginBottom="md">
-            🚀 Ready for Phase 2
+            📊 {currentTheme.name} Theme Specs
           </Text>
           
-          <Text variant="bodySmall" color="secondary" align="center" marginBottom="lg">
-            Coming next: TextArea, Select, Modal, Toast, Switch
+          <Container variant="row" justify="spaceBetween" marginBottom="xs">
+            <Text variant="bodySmall" color="tertiary">Spacing Scale:</Text>
+            <Text variant="bodySmall" color="primary">{currentTheme.spacing.xs}-{currentTheme.spacing.xxxl}px</Text>
+          </Container>
+          
+          <Container variant="row" justify="spaceBetween" marginBottom="xs">
+            <Text variant="bodySmall" color="tertiary">Border Radius:</Text>
+            <Text variant="bodySmall" color="primary">{currentTheme.layout.borderRadius.sm}-{currentTheme.layout.borderRadius.lg}px</Text>
+          </Container>
+          
+          <Container variant="row" justify="spaceBetween" marginBottom="xs">
+            <Text variant="bodySmall" color="tertiary">Typography Sizes:</Text>
+            <Text variant="bodySmall" color="primary">{currentTheme.typography.styles.caption.fontSize}-{currentTheme.typography.styles.h1.fontSize}px</Text>
+          </Container>
+          
+          <Container variant="row" justify="spaceBetween">
+            <Text variant="bodySmall" color="tertiary">Shadow Style:</Text>
+            <Text variant="bodySmall" color="primary">
+              {currentTheme.name === 'earth' ? 'Off-center organic' : 
+               currentTheme.name === 'dreamy' ? 'Soft & cushioned' : 
+               'Clean & precise'}
+            </Text>
+          </Container>
+        </Card>
+
+        {/* Footer */}
+        <Card variant="primary" shadow="elevated">
+          <Text variant="h3" color="inverse" align="center" marginBottom="md">
+            🚀 Design System Mastery
           </Text>
           
-          <Container variant="row" style={{ gap: theme.spacing.sm }}>
-            <Button variant="primary" size="sm" style={{ flex: 1 }}>
-              Build TextArea
+          <Text variant="body" color="inverse" align="center" marginBottom="lg">
+            You've just experienced the power of semantic design tokens! Each theme transforms every component while maintaining perfect consistency.
+          </Text>
+          
+          <Container variant="row" style={{ gap: currentTheme.spacing.sm }}>
+            <Button variant="secondary" size="sm" style={{ flex: 1 }}>
+              Export Theme
             </Button>
-            <Button variant="success" size="sm" style={{ flex: 1 }}>
-              Build Select
+            <Button variant="secondary" size="sm" style={{ flex: 1 }}>
+              Fork Design
             </Button>
-            <Button variant="warning" size="sm" style={{ flex: 1 }}>
-              Build Modal
+            <Button variant="secondary" size="sm" style={{ flex: 1 }}>
+              Share Demo
             </Button>
           </Container>
         </Card>
@@ -375,9 +413,16 @@ export const StylingDemo: React.FC = () => {
   );
 };
 
+export const StylingDemo: React.FC = () => {
+  return (
+    <ThemeProvider>
+      <StylingDemoContent />
+    </ThemeProvider>
+  );
+};
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.surface.tertiary,
   },
 }); 

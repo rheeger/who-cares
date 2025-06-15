@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, ViewProps } from 'react-native';
 import { createContainerStyles, combineStyles, createSpacingStyle, SpacingKey } from '../../styles/utils';
+import { useTheme } from '../ThemeContext';
 
 type LayoutVariant = 'screen' | 'content' | 'centered' | 'row' | 'column';
 type JustifyVariant = 'spaceBetween' | 'spaceAround' | 'spaceEvenly';
@@ -21,8 +22,6 @@ interface ContainerProps extends ViewProps {
   children: React.ReactNode;
 }
 
-const containerStyles = createContainerStyles();
-
 export const Container: React.FC<ContainerProps> = ({
   variant = 'content',
   justify,
@@ -40,17 +39,20 @@ export const Container: React.FC<ContainerProps> = ({
   style,
   ...props
 }) => {
+  const { currentTheme } = useTheme();
+  const containerStyles = createContainerStyles(currentTheme);
+  
   const spacingStyles = [
-    padding && createSpacingStyle('padding', padding),
-    margin && createSpacingStyle('margin', margin),
-    paddingHorizontal && createSpacingStyle('padding', paddingHorizontal, 'horizontal'),
-    paddingVertical && createSpacingStyle('padding', paddingVertical, 'vertical'),
-    marginHorizontal && createSpacingStyle('margin', marginHorizontal, 'horizontal'),
-    marginVertical && createSpacingStyle('margin', marginVertical, 'vertical'),
-    marginTop && createSpacingStyle('margin', marginTop, 'top'),
-    marginBottom && createSpacingStyle('margin', marginBottom, 'bottom'),
-    marginLeft && createSpacingStyle('margin', marginLeft, 'left'),
-    marginRight && createSpacingStyle('margin', marginRight, 'right'),
+    padding && createSpacingStyle('padding', padding, undefined, currentTheme),
+    margin && createSpacingStyle('margin', margin, undefined, currentTheme),
+    paddingHorizontal && createSpacingStyle('padding', paddingHorizontal, 'horizontal', currentTheme),
+    paddingVertical && createSpacingStyle('padding', paddingVertical, 'vertical', currentTheme),
+    marginHorizontal && createSpacingStyle('margin', marginHorizontal, 'horizontal', currentTheme),
+    marginVertical && createSpacingStyle('margin', marginVertical, 'vertical', currentTheme),
+    marginTop && createSpacingStyle('margin', marginTop, 'top', currentTheme),
+    marginBottom && createSpacingStyle('margin', marginBottom, 'bottom', currentTheme),
+    marginLeft && createSpacingStyle('margin', marginLeft, 'left', currentTheme),
+    marginRight && createSpacingStyle('margin', marginRight, 'right', currentTheme),
   ].filter(Boolean);
 
   const combinedStyle = combineStyles(
