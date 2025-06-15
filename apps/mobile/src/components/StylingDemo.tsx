@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, ScrollView } from 'react-native';
-import { Button, Text, Card, Container, Input, Alert, Divider } from '../../../../src/components/ui';
+import { Button, Text, Card, Container, Input, Alert, Divider } from './ui';
 import { theme } from '../styles/theme';
 
 export const StylingDemo: React.FC = () => {
